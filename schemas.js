@@ -20,3 +20,27 @@ module.exports.campgroundSchema=joi.object({
 
 
 // console.log(result);
+
+
+
+
+// review:{
+//   rating: Number,
+//   body : String
+
+// }
+
+module.exports.reviewSchema=joi.object({
+
+  //this must follow the pattern of 
+  // campgroung type is object and is required
+  //inside this campground obj we have 
+  //all diiferent properties to check
+  review: joi.object({
+
+    body:joi.string().required(),
+    rating:joi.number().required()
+    
+  }
+  ).required()
+});
