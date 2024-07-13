@@ -2,9 +2,10 @@ const mongoose = require("mongoose");
 const cities = require("./cities");
 const { places, descriptors } = require("./seedHelpers");
 const Campground = require("../models/campground");
+require('dotenv').config();
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/yelp-camp")
+  .connect(process.env.MONGO_URL)
   .then(() => {
     console.log("Connected to MongoDB");
   })

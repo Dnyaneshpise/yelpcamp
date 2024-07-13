@@ -4,12 +4,15 @@ const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const Campground = require('./models/campground');
 const ejsMate= require('ejs-mate');
-const joi = require('joi')
+const {campgroundSchema} = require('./schemas')
 const catchAsync = require('./utils/catchAsync') 
 const ExpressError =require('./utils/ExpressError')
 const exp = require('constants');
 const { title } = require('process');
-mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp')
+require('dotenv').config();
+
+
+mongoose.connect(process.env.MONGO_URL)
     .then(() => {
         console.log("Connected to MongoDB");
     })
@@ -29,34 +32,15 @@ app.use(methodOverride('_method'))
 
 
 const validateCampground = function(req,res,next){
-  const campgroundSchema=joi.object({
-
-    //this must follow the pattern of 
-    // campgroung type is object and is required
-    //inside this campground obj we have 
-    //all diiferent properties to check
-    campground: joi.object({
-
-      title:joi.string().required(),
-      price:joi.number().required().min(0),
-      image:joi.string().required(),
-      location:joi.string().required(),
-      description:joi.string().required(),
-
-    }
-    ).required()
-  });
-
   const { error }= campgroundSchema.validate(req.body);
-  if(error){
-    const msg = error.details.map(ele => ele.message).join(",")
-    console.log(msg)
-    throw new ExpressError(msg,400)
-  }else{
+if(error){
+  const msg = error.details.map(ele => ele.message).join(",")
+  console.log(msg)
+  throw new ExpressError(msg,400)
+}else{
 
-    next();
-  }
-  // console.log(result);
+  next();
+}
 }
 
 
@@ -80,34 +64,9 @@ app.get('/campgrounds/:id', catchAsync(async (req,res)=>{
   res.render('campgrounds/show' , { campground })
 }));
 
-app.post('/campgrounds',catchAsync(async (req ,res,next)=>{
+app.post('/campgrounds', validateCampground ,catchAsync(async (req ,res,next)=>{
 
   // if(!req.body.campground) throw new ExpressError('Invalid Campground Data', 400)
-
-    const campgroundSchema=joi.object({
-
-      //this must follow the pattern of 
-      // campgroung type is object and is required
-      //inside this campground obj we have 
-      //all diiferent properties to check
-      campground: joi.object({
-
-        title:joi.string().required(),
-        price:joi.number().required().min(0),
-        image:joi.string().required(),
-        location:joi.string().required(),
-        description:joi.string().required(),
-
-      }
-      ).required()
-    });
-
-    const { error }= campgroundSchema.validate(req.body);
-    if(error){
-      const msg = error.details.map(ele => ele.message).join(",")
-      throw new ExpressError(msg,400)
-    }
-    // console.log(result);
 
     const campground = new Campground(req.body.campground);
     await campground.save();
@@ -144,6 +103,8 @@ app.use((err,req,res,next)=>{
   res.status(statusCode).render("error",{ err });
 })
 
-app.listen(8080,()=>{
-  console.log("app started at the port 8080")
+PORT=process.env.PORT||3000
+
+app.listen(PORT,()=>{
+  console.log("app started at the port", PORT)
 })
