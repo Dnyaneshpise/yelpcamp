@@ -1,40 +1,90 @@
-<% layout('layouts/boilerplate') %>
+<%- layout('layouts/boilerplate') %>
 <div class="row">
   <div class="col-6 offset-3">
     <div class="card mb-3">
-      <img src="<%= campground.image %>" class="card-img-top" alt="...">
+      <img src="<%= campground.image %>" class="card-img-top" alt="..." />
       <div class="card-body">
         <h5 class="card-title"><%= campground.title %></h5>
         <p class="card-text">S<%= campground.description %></p>
       </div>
       <ul class="list-group list-group-flush">
-        <li class="list-group-item text-secondary"><%= campground.location %></li>
+        <li class="list-group-item text-secondary">
+          <%= campground.location %>
+        </li>
         <li class="list-group-item">$<%= campground.price %>/night</li>
       </ul>
       <div class="card-body">
-        <a href="/campgrounds/<%= campground._id %>/edit" class="card-link btn btn-info">Edit</a>
-        <form class="d-inline" action="/campgrounds/<%= campground._id %>?_method=DELETE" method="post">
-          <button class="btn btn-danger">Delte Campground</button>
-          </form>
+        <a
+          href="/campgrounds/<%= campground._id %>/edit"
+          class="card-link btn btn-info"
+          >Edit</a
+        >
+        <form
+          class="d-inline"
+          action="/campgrounds/<%= campground._id %>?_method=DELETE"
+          method="post"
+        >
+          <button class="btn btn-danger">Delete Campground</button>
+        </form>
       </div>
-      <div class="card-footer text-muted">
-        2 days ago
-      </div>
+      <div class="card-footer text-muted">2 days ago</div>
     </div>
-    <h2>Leave a Review </h2>
-    <form action="" class="mb-3">
+    <h2>Leave a Review</h2>
+    <form
+      action="/campgrounds/<%= campground._id %>/reviews"
+      novalidate
+      class="mb-3 validated-form"
+      method="post"
+    >
       <div class="mb-3">
         <label for="review" class="form-label">Rating</label>
-        <input type="range" name="review[rating]" class="form-range" min="1" max="5" step="1" id="review">
+        <input
+          type="range"
+          name="review[rating]"
+          class="form-range"
+          min="1"
+          max="5"
+          step="1"
+          id="review"
+        />
       </div>
       <div class="mb-3">
-        <label class="form-lable" for="body">Review</label>
-        <textarea class="form-control" name="review[body]" id="body" cols="30" rows="3">
-
-        </textarea>
+        <label class="form-label" for="body">Review</label>
+        <textarea
+          class="form-control"
+          name="review[body]"
+          id="body"
+          cols="30"
+          rows="3"
+          required
+        ></textarea>
+        <div class="valid-feedback">Looks good!</div>
       </div>
       <button class="btn btn-success">Submit</button>
     </form>
   </div>
 </div>
-  
+<script>
+  (() => {
+    "use strict";
+
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    const forms = document.querySelectorAll(".validated-form");
+
+    // Loop over them and prevent submission
+    Array.from(forms).forEach((form) => {
+      form.addEventListener(
+        "submit",
+        (event) => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  })();
+</script>
