@@ -1,0 +1,29 @@
+<% if(success && success.length){ %>
+
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong><%= success %></strong>
+    <!-- You should check in on some of those fields below. -->
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+  </div>
+
+<% } %>
+
+<% if(error && error.length){ %>
+
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong><%= error %></strong>
+    <!-- You should check in on some of those fields below. -->
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+  </div>
+
+<% } %>
