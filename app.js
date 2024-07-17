@@ -13,6 +13,9 @@ require('dotenv').config();
 const campgrounds = require('./routes/campgrounds')
 const reviews = require('./routes/reviews')
 
+const passport = require('passport')
+const LocalStatergy = require('passport-local');
+const User = require('./models/user');
 
 mongoose.connect(process.env.MONGO_URL)
     .then(() => {
@@ -48,11 +51,28 @@ const sessionConfig ={
 app.use(session(sessionConfig));
 app.use(flash())
 
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStatergy(User.authenticate()));
+
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use((req,res,next)=>{
   //on every single request we set up this variable
   res.locals.success=req.flash('success');
   res.locals.error=req.flash('error');
   next();
+})
+
+
+app.get('/fakeuser',async (req,res)=>{
+  const user = new User({email:"contacttt@email.com",username:"takeuseer"});
+  const newUser = await User.register(user,"Pass@123");
+  res.send(newUser)
 })
 
 app.use('/campgrounds', campgrounds)
