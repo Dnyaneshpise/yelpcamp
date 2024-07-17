@@ -10,8 +10,10 @@ const exp = require('constants');
 const { title } = require('process');
 require('dotenv').config();
 
-const campgrounds = require('./routes/campgrounds')
-const reviews = require('./routes/reviews')
+
+const usersRoutes = require('./routes/user')
+const campgroundsRoutes = require('./routes/campgrounds')
+const reviewsRoutes = require('./routes/reviews')
 
 const passport = require('passport')
 const LocalStatergy = require('passport-local');
@@ -69,14 +71,11 @@ app.use((req,res,next)=>{
 })
 
 
-app.get('/fakeuser',async (req,res)=>{
-  const user = new User({email:"contacttt@email.com",username:"takeuseer"});
-  const newUser = await User.register(user,"Pass@123");
-  res.send(newUser)
-})
 
-app.use('/campgrounds', campgrounds)
-app.use('/campgrounds/:id/reviews', reviews)
+
+app.use('/', usersRoutes)
+app.use('/campgrounds', campgroundsRoutes)
+app.use('/campgrounds/:id/reviews', reviewsRoutes)
 
 
 app.get('/',(req,res)=>{
