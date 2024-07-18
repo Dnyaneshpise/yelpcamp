@@ -65,6 +65,7 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use((req,res,next)=>{
   //on every single request we set up this variable
+  res.locals.currentUser=req.user;
   res.locals.success=req.flash('success');
   res.locals.error=req.flash('error');
   next();
