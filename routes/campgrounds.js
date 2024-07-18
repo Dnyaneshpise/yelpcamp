@@ -18,9 +18,14 @@ router.get('/new',isLoggedIn,(req , res)=>{
 
 router.get('/:id', catchAsync(async (req,res)=>{
   const { id } = req.params;
-  const campground = await Campground.findById(id).populate('reviews').populate('author');
+  const campground = await Campground.findById(id)
+    .populate({
+        path: 'reviews',
+        populate: { path: 'author' }
+    })
+    .populate('author');
 
-  console.log(campground)
+  console.log(campground.reviews)
   //if somebody delete it it will give error not by 
   //mongoose but in templeting since it will be an 
   //empty campground object
