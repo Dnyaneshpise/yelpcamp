@@ -10,7 +10,7 @@ module.exports.renderNewForm = (req , res)=>{
   res.render('campgrounds/new')
 }
 
-module.exports.createCampground = async (req,res)=>{
+module.exports.showCampground = async (req,res)=>{
   const { id } = req.params;
   const campground = await Campground.findById(id)
     .populate({
@@ -33,7 +33,7 @@ module.exports.createCampground = async (req,res)=>{
 }
 
 
-module.exports.showCampground = async (req ,res,next)=>{
+module.exports.createCampground = async (req ,res,next)=>{
 
   
   // if(!req.body.campground) throw new ExpressError('Invalid Campground Data', 400)

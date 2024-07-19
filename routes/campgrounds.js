@@ -9,12 +9,12 @@ const {isLoggedIn,isAuthor,validateCampground} = require('../middleware')
 
 router.route('/')
   .get(catchAsync(campground.index))
-  .post(isLoggedIn, validateCampground ,catchAsync(campground.showCampground));
+  .post(isLoggedIn, validateCampground ,catchAsync(campground.createCampground));
 
 router.get('/new',isLoggedIn,campground.renderNewForm);
 
 router.route('/:id')
-  .get(catchAsync(campground.createCampground))
+  .get(catchAsync(campground.showCampground))
   .put(isLoggedIn, isAuthor, validateCampground, catchAsync(campground.UpdateCampground))
   .delete(isLoggedIn, isAuthor, catchAsync(campground.deleteCampground));
 
