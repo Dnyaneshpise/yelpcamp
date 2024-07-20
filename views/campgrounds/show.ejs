@@ -1,6 +1,6 @@
 <%- layout('layouts/boilerplate') %>
 <link rel="stylesheet" href="/stylesheets/stars.css">
-<div class="row">
+<div class="row ">
   <div class="col-6 ">
 
     <div id="campgroundFade" class="carousel slide carousel-fade">
@@ -56,11 +56,10 @@
       </div>
       <% } %>
       <div class="card-footer text-muted">2 days ago</div>
+    </div> 
     </div>
-    
-    
   </div>
-  <div class="col-6">
+  <div class="col-6 ">
     <% if(currentUser){ %>
     <h2>Leave a Review</h2>
     <form
@@ -131,6 +130,7 @@
     </div>
     <% } %>
   </div>
+</div>
 </div>
 <!-- <script>
   (() => {
