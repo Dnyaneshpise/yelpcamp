@@ -1,3 +1,5 @@
+const maptilerClient = require("@maptiler/client");
+maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
 
 const { cloudinary } = require('../cloudinary');
 const Campground = require('../models/campground');
@@ -11,7 +13,7 @@ module.exports.renderNewForm = (req , res)=>{
   res.render('campgrounds/new')
 }
 
-module.exports.createCampground = async (req,res)=>{
+module.exports.showCampground = async (req,res)=>{
   const { id } = req.params;
   const campground = await Campground.findById(id)
     .populate({
@@ -34,18 +36,24 @@ module.exports.createCampground = async (req,res)=>{
 }
 
 
-module.exports.showCampground = async (req ,res,next)=>{
+module.exports.createCampground = async (req ,res,next)=>{
 
   
   // if(!req.body.campground) throw new ExpressError('Invalid Campground Data', 400)
   
+  //adding maps
 
-
+  const geoData = await maptilerClient.geocoding.forward(req.body.campground.location, { limit: 1 });
   const campground = new Campground(req.body.campground);
+  //adding GeoJSON
+  campground.geometry = geoData.features[0].geometry;
   campground.images=
   req.files.map(f=>({url:f.path,filename:f.filename})); //this returns array
   campground.author = req.user._id;
   await campground.save();
+
+  console.log(campground);
+
   req.flash('success' , 'Successfully made a new campground!')
   res.redirect(`/campgrounds/${campground._id}`)
 }
