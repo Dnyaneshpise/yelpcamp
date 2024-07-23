@@ -24,6 +24,10 @@ const seedDB = async () => {
       author:'669ab082ec9887ecd22bf0df',
       location: `${cities[random1000].city}, ${cities[random1000].state}`,
       title: `${sample(descriptors)} ${sample(places)}`,
+      geometry: {
+        type: 'Point',
+        coordinates: [ 79.088860, 21.146633 ]
+      },
       images:{
         url:`https://picsum.photos/400?random=${Math.random()}`,
         filename: "randImg"
