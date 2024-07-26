@@ -11,6 +11,8 @@ const { title } = require('process');
 require('dotenv').config();
 
 
+const mongoSanitize = require('express-mongo-sanitize');
+
 const usersRoutes = require('./routes/user')
 const campgroundsRoutes = require('./routes/campgrounds')
 const reviewsRoutes = require('./routes/reviews')
@@ -33,6 +35,10 @@ const app = express();
 app.engine('ejs',ejsMate)
 app.set('view engine','ejs');
 app.set('views',path.join(__dirname,'views'))
+
+mongoSanitize.sanitize(payload, {
+  replaceWith: '_'
+});
 
 app.use(express.urlencoded({ extended:true }))
 app.use(methodOverride('_method'))
