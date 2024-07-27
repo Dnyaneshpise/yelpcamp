@@ -36,9 +36,11 @@ app.engine('ejs',ejsMate)
 app.set('view engine','ejs');
 app.set('views',path.join(__dirname,'views'))
 
-mongoSanitize.sanitize(payload, {
-  replaceWith: '_'
-});
+app.use(
+  mongoSanitize({
+    replaceWith: '_',
+  }),
+);
 
 app.use(express.urlencoded({ extended:true }))
 app.use(methodOverride('_method'))

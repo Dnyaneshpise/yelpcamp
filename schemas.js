@@ -1,4 +1,43 @@
-const joi = require('joi')
+const BaseJoi = require('joi');
+
+
+//had to inport this package 
+//as joi not have their own
+
+const sanitizeHtml = require('sanitize-html');
+
+
+
+//here I am creating my own extesion
+//for joi
+//better to use 
+//express validater next time
+
+
+
+
+
+const extension = (joi) => ({
+    type: 'string',
+    base: joi.string(),
+    messages: {
+        'string.escapeHTML': '{{#label}} must not include HTML!'
+    },
+    rules: {
+        escapeHTML: {
+            validate(value, helpers) {
+                const clean = sanitizeHtml(value, {
+                    allowedTags: [],
+                    allowedAttributes: {},
+                });
+                if (clean !== value) return helpers.error('string.escapeHTML', { value })
+                return clean;
+            }
+        }
+    }
+});
+
+const joi = BaseJoi.extend(extension)
 
 module.exports.campgroundSchema=joi.object({
 
@@ -8,11 +47,11 @@ module.exports.campgroundSchema=joi.object({
   //all diiferent properties to check
   campground: joi.object({
 
-    title:joi.string().required(),
+    title:joi.string().required().escapeHTML(),
     price:joi.number().required().min(0),
     // image:joi.string().required(),
-    location:joi.string().required(),
-    description:joi.string().required(),
+    location:joi.string().required().escapeHTML(),
+    description:joi.string().required().escapeHTML(),
 
   }
   ).required()
@@ -40,7 +79,7 @@ module.exports.reviewSchema=joi.object({
   //all diiferent properties to check
   review: joi.object({
 
-    body:joi.string().required(),
+    body:joi.string().required().escapeHTML(),
     rating:joi.number().required()
     
   }
