@@ -8,7 +8,13 @@ const flash = require('connect-flash')
 const ExpressError =require('./utils/ExpressError')
 const exp = require('constants');
 const { title } = require('process');
-require('dotenv').config();
+
+const helmet = require("helmet");
+
+if(process.env.NODE_ENV !== 'production'){
+
+  require('dotenv').config();
+}
 
 
 const mongoSanitize = require('express-mongo-sanitize');
@@ -42,17 +48,69 @@ app.use(
   }),
 );
 
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
+
+const scriptSrcUrls = [
+  "https://stackpath.bootstrapcdn.com/",
+  "https://kit.fontawesome.com/",
+  "https://cdnjs.cloudflare.com/",
+  "https://cdn.jsdelivr.net",
+  "https://cdn.maptiler.com/", 
+];
+const styleSrcUrls = [
+  "https://kit-free.fontawesome.com/",
+  "https://stackpath.bootstrapcdn.com/",
+  "https://fonts.googleapis.com/",
+  "https://use.fontawesome.com/",
+  "https://cdn.jsdelivr.net",
+  "https://cdn.maptiler.com/", 
+];
+const connectSrcUrls = [
+  "https://api.maptiler.com/", 
+];
+
+const fontSrcUrls = [];
+app.use(
+  helmet.contentSecurityPolicy({
+      directives: {
+          defaultSrc: [],
+          connectSrc: ["'self'", ...connectSrcUrls],
+          scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+          styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+          workerSrc: ["'self'", "blob:"],
+          objectSrc: [],
+          imgSrc: [
+              "'self'",
+              "blob:",
+              "data:",
+              "https://res.cloudinary.com/dfxlspnvy/", 
+              "https://fastly.picsum.photos/",
+              "https://picsum.photos/",
+              "https://images.unsplash.com/",
+          ],
+          fontSrc: ["'self'", ...fontSrcUrls],
+      },
+  })
+);
+
+
 app.use(express.urlencoded({ extended:true }))
 app.use(methodOverride('_method'))
 
 app.use(express.static(path.join(__dirname,'public')));
 
 const sessionConfig ={
+  name:"session",
   secret: 'thisissecretdonttellanybody',
   resave:false,
   saveUninitialized:true,
   cookies:{
     httpOnly: true,
+    // secure:true,
     expires:Date.now() + 1000*60*60*24*7,
     maxAge:1000*60*60*24*7
   }
