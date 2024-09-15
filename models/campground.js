@@ -16,12 +16,23 @@ ImageSchema.virtual('thumbnail').get(function (){
 }
 )
 
-
+const opts ={toJSON:{virtuals:true}}
 
 const CampgroundSchema = new Schema({
   title:String,
   images:[ImageSchema],
   price:Number,
+  geometry: {
+    type: {
+        type: String,
+        enum: ['Point'],
+        required: true
+    },
+    coordinates: {
+        type: [Number],
+        required: true
+    }
+  },
   description:String,
   location:String,
   author:{
@@ -34,7 +45,11 @@ const CampgroundSchema = new Schema({
       ref:'Review'
     }
   ]
-});
+} , opts );
+
+CampgroundSchema.virtual('properties.popUpMarkup').get(function(){
+  return `<strong><a href="/campgrounds/${this._id}" target="_blank">${this.title}</a></strong>`
+})
 
 CampgroundSchema.post('findOneAndDelete',async function(doc){
   // console.log("Deleted")
